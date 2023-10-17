@@ -16,11 +16,52 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAMwBWIovWKAjADYAnMsW6A7EYAsugDQhMiALTmi5xX1OuATIqPLtp7QF8-KzQsPEIiABEAJQBBAHV2ADkAcWp6ZloANSZ+ISQQNDFJaVkFBE1lPkcXXQAOU00dbTdNGpqrGwQ3Pkr9TUMVLT4WzVMAoIwcAmIouMSUgCEAQwBjAGtYZBWwHNkCiSkZPNLTPkUiXW0+ZS7TIz5ag0V2xBbTIgq9K+U+4zrRwPyE1C0xi8WSFCY+HEYAATjs8nsiodQKUmm4iE0jC0al5WrUntZEPUiHU+G5dJ5tJpjNpFG5-ADgpMwjMwSkmLBlotkNtBLtRPtikdEN9KjVaporuV6TV6dpnghbJLVC0vOYjLpdC0NGNASEphFQXNUoxWBxuPCRIUDiUlJqiEYanpFOKfOTlArbG4HKrlFrlN4KSZlLqmcDDbNwbRTWxOLxNLkrYLkfI7Q6nRSmr07g1Pd70dojJ4dAGXRo3AEAfhUBA4Pz9YR+dahSi7JoC9pOzVnL4yW5vgSOrZ1No1MpTP2agPNQZQ0CDaRyE3k7aELo3gGA2SceO3Bq3AqfFU9+ufN5HV45w2QZGksukauVG8jN7XGTzA126YFZ5HBqGmYNSnBSFQhpWQA */
         id: "polyLine",
         initial: "idle",
         states : {
-            idle: {
+            idle: {on: {
+                MOUSECLICK: {
+                    target: "DRAWING",
+                    actions: "createLine",
+    
+                },}},
+
+            DRAWING: {
+                on: {
+                    MOUSEMOVE: {
+                        target: "DRAWING",
+                        actions: "setLastpoint",
+                        internal: true
+                    },
+
+                    Backspace: {
+                        target: "DRAWING",
+                        cond: "plusDeDeuxPoints",
+                        actions: "removeLastPoint",
+                        internal: true
+                    },
+
+                    Enter: {
+                        target: "idle",
+                        actions: "saveLine"
+                    },
+
+                    Escape: {
+                        target: "idle",
+                        actions: "abandon"
+                    },
+
+                    MOUSECLICK: [{
+                        target: "DRAWING",
+                        cond: "pasPlein",
+                        actions: "addPoint",
+                        internal: true
+                    }, {
+                        target: "idle",
+                        actions: "saveLine"
+                    }]
+                }
             }
         }
     },
